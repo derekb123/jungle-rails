@@ -7,17 +7,13 @@ class User < ActiveRecord::Base
   validates :email, uniqueness: true
   validates :email, uniqueness: { case_sensitive: false }
   validates :password, presence: true
-  validates :password, length: { in: 6..20 }
+  validates :password, length: { in: 1..20 }
   validates :password, confirmation: true
   validates :password_confirmation, presence: true
 
   def self.authenticate_with_credentials(email, password)
-    user = User.find_by(email: email, password_digest: password)
-    if user 
-      puts "user item is: #{user}" 
-      return user
-    else 
-      return nil
-    end
+    newemail = email.downcase.strip
+    user = User.find_by_email(newemail)
+    user if user&.authenticate(password)
   end
 end
